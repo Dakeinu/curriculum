@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  max-height: 100vh;
+}
+
+.App {
+  color: #F7F7F5;
+  height: 100vh;
+}
+
+.container {
+  max-width: -webkit-fill-available;
+  width: 100%;
+}
+
+/*///////////////////////////////// NAVBAR /////////////////////////////////////*/
+
+@media screen and (max-width: 768px) {
+  .item-text {
+    display: none;
+  }
+}
+
+.item-data {
+  color: #a8a8a8;
+  font-weight: bold;
+}
+
+.navbar-inner a:hover .item-icon {
+  color: #ff005e;
+}
+
+.welcome-content-name {
+  border: 2px solid #FFFFFF;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 10px 15px -10px #2B2B2B;
+}
+
+/* .welcome-content-photo {
+  background-image: url("./assets/gradient.png");
+  background-size: cover;
+  background-position: center;
+  border-radius: 5px;
+} */
+
+/*///////////////////////////////// END NAVBAR /////////////////////////////////////*/
+
+
+/*///////////////////////////////// Button /////////////////////////////////////*/
+
+.button-primary {
+  background: linear-gradient(#121212, #121212) padding-box,
+    linear-gradient(105.5deg, #FD0404 -60.83%, #EF04F3 151.4%);
+  border-radius: 5px;
+  border-right: 4px dashed transparent;
+  border-left: 4px dashed transparent;
+}
+
+.button-primary:hover {
+  background: linear-gradient(105.5deg, #FD0404 -60.83%, #EF04F3 151.4%);
+  color: #F7F7F5;
+  border-right: 4px solid #F7F7F5;
+  border-left: 4px solid #F7F7F5;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(162, 162, 162, 0.2);
+}
+
+@media screen and (max-width: 768px) {
+  .button-primary {
+    background: linear-gradient(105.5deg, #FD0404 -60.83%, #EF04F3 151.4%);
+    color: #F7F7F5;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .button-primary:hover {
+    box-shadow: 0 10px 20px rgba(162, 162, 162, 0.2);
+    border: none;
+  }
+}
+
+/*///////////////////////////////// END Button /////////////////////////////////////*/
+
+/*///////////////////////////////// Background /////////////////////////////////////*/
+
+.bg-gradient {
+  background: linear-gradient(105.5deg, #FD0404 -60.83%, #EF04F3 151.4%);
+}
+
+.navbar-inner a:hover .bg-gradient {
+  background: #F7F7F5;
+}
+
+@media screen and (max-width: 768px) {
+  .bg-gradient {
+    background: transparent;
+  }
+
+  .bg-gradient:hover {
+    background: transparent;
+  }
+}
+
+/*///////////////////////////////// END Background /////////////////////////////////////*/
