@@ -1,5 +1,10 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
+export interface Pages {
+    name: string;
+    link: string;
+}
+
 export interface MyProfile {
     photo: string;
     name: string;

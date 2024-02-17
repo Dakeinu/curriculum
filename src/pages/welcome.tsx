@@ -13,7 +13,7 @@ export const Welcome = () => {
         <>  
             <Navbar />
             <div className="container">
-                <div className='welcome-content w-2/3 md:w-1/3 translate-y-1/4 flex flex-col m-auto'>
+                <div className='welcome-content w-2/3 md:w-1/3 flex flex-col m-auto'>
                     <div className='welcome-content-photo'>
                         <img src={profile.photo} alt="Photo de Rémi Falcati" className='w-full h-full m-auto md:w-1/2'/>
                     </div>
