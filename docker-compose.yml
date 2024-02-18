@@ -3,9 +3,7 @@ version: '3.8'
 services:
   vitejs-app:
     container_name: vitejs-app
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: dakeinu/curriculum:latest
     ports:
       - "80:80"
     restart: unless-stopped
