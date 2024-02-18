@@ -40,13 +40,6 @@ body {
   box-shadow: 0px 10px 15px -10px #2B2B2B;
 }
 
-/* .welcome-content-photo {
-  background-image: url("./assets/gradient.png");
-  background-size: cover;
-  background-position: center;
-  border-radius: 5px;
-} */
-
 /*///////////////////////////////// END NAVBAR /////////////////////////////////////*/
 
 
@@ -85,6 +78,22 @@ body {
     box-shadow: 0 10px 20px rgba(162, 162, 162, 0.2);
     border: none;
   }
+}
+
+.pagination-button {
+  background: linear-gradient(105.5deg, #FD0404 -60.83%, #EF04F3 151.4%);
+  color: #F7F7F5;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 10px;
+}
+
+.pagination-button:hover {
+  box-shadow: 0 10px 20px rgba(162, 162, 162, 0.2);
+  border: none;
 }
 
 /*///////////////////////////////// END Button /////////////////////////////////////*/

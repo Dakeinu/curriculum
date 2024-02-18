@@ -1,4 +1,6 @@
 import { Pages } from '../interfaces/models';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 export const Pagination = ({ pages, currentPage }: { pages: Pages[], currentPage: Pages }) => {
 
@@ -19,15 +21,15 @@ export const Pagination = ({ pages, currentPage }: { pages: Pages[], currentPage
     }
 
     return (
-        <div className='pagination flex flex-row justify-between py-4 px-8'>
-            <a href={setPreviousPage(currentPage).link} className='button-primary w-1/2'>
+        <div className='pagination flex flex-row justify-center py-4 px-8'>
+            <a href={setPreviousPage(currentPage).link} className='pagination-button'>
                 <div className='pagination-inner flex flex-row justify-start'>
-                    <span className='text-sm'>Précédent</span>
+                    <span className='text-sm'><FontAwesomeIcon icon={faChevronLeft} /></span>
                 </div>
             </a>
-            <a href={setNextPage(currentPage).link} className='button-primary w-1/2'>
+            <a href={setNextPage(currentPage).link} className='pagination-button'>
                 <div className='pagination-inner flex flex-row justify-end'>
-                    <span className='text-sm'>Suivant</span>
+                    <span className='text-sm'><FontAwesomeIcon icon={faChevronRight} /></span>
                 </div>
             </a>
         </div>
