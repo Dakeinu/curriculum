@@ -40,23 +40,23 @@ jobs:
         
     - name: Connect to server via SSH and change user
       run: |
-        ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo -u remif bash"
+        ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.SSH_HOST }} "sudo -u remif bash"
 
     - name: Go to the project directory
       run: |
-        ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /var/www/vhost/factiremi.com/httpdocs/curriculum"
+        ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.SSH_HOST }} "cd /var/www/vhost/factiremi.com/httpdocs/curriculum"
 
     - name: Pull latest changes from GitHub
       run: |
-        ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "git pull"
+        ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.SSH_HOST }} "git pull"
 
     - name: Pull latest Docker image from Docker Hub
       run: |
-        ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker pull dakeinu/curriculum:latest"
+        ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.SSH_HOST }} "docker pull dakeinu/curriculum:latest"
 
     - name: Run latest Docker image with Docker Compose
       run: |
-        ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker-compose up -d"
+        ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.SSH_HOST }} "docker-compose up -d"
 
     
 
