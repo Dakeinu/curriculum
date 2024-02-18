@@ -29,25 +29,36 @@ jobs:
     - name: Push Docker image to Docker Hub
       run: docker push dakeinu/curriculum:latest
 
+    - name: Setup SSH
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H example.com >> ~/.ssh/known_hosts
+        ssh-agent -a "$SSH_AUTH_SOCK" > /dev/null
+        ssh-add ~/.ssh/id_rsa
+
     - name: Connect to server via SSH and change user
       run: |
-        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "sudo -u remif bash"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "sudo -u remif bash"
 
     - name: Go to the project directory
       run: |
-        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd /var/www/vhost/factiremi.com/httpdocs/curriculum"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd /var/www/vhost/factiremi.com/httpdocs/curriculum"
 
     - name: Pull latest changes from GitHub
       run: |
-        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "git pull"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "git pull"
 
     - name: Pull latest Docker image from Docker Hub
       run: |
-        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "docker pull dakeinu/curriculum:latest"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "docker pull dakeinu/curriculum:latest"
 
     - name: Run latest Docker image with Docker Compose
       run: |
-        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "docker-compose up -d"
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "docker-compose up -d"
 
     
 
