@@ -46,6 +46,10 @@ jobs:
       run: |
         ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd /var/www/vhost/falcatiremi.com/httpdocs/curriculum/"
 
+    - name: Check directory path
+      run: |
+        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "pwd"
+
     - name: Check if Github repository is already cloned
       run: |
         ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "ls -a"
