@@ -42,7 +42,10 @@ COPY ssl-params.conf /etc/nginx/snippets/ssl-params.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Exposer le port 80
-EXPOSE 80 443
+EXPOSE 80
+
+# Exposer le port 443
+EXPOSE 443
 
 # Lancer Nginx
 CMD ["nginx", "-g", "daemon off;"]
