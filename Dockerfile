@@ -33,9 +33,8 @@ COPY --from=build-stage /app/dist /usr/share/nginx/html
 RUN rm -rf /etc/nginx/server.cert
 RUN rm -rf /etc/nginx/server.key
 
-# Copier les fichiers du certificat SSL
-COPY server.cert /etc/nginx/server.cert
-COPY server.key /etc/nginx/server.key
+# Create folder for SSL certificates
+RUN mkdir -p /etc/letsencrypt/live
 
 COPY ssl-params.conf /etc/nginx/snippets/ssl-params.conf
 
@@ -43,8 +42,7 @@ COPY ssl-params.conf /etc/nginx/snippets/ssl-params.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Exposer le port 80
-EXPOSE 80
-EXPOSE 443
+EXPOSE 80 443
 
 # Lancer Nginx
 CMD ["nginx", "-g", "daemon off;"]
