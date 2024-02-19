@@ -37,6 +37,8 @@ RUN rm -rf /etc/nginx/server.key
 COPY server.cert /etc/nginx/server.cert
 COPY server.key /etc/nginx/server.key
 
+COPY ssl-params.conf /etc/nginx/snippets/ssl-params.conf
+
 # Copier le fichier de configuration Nginx (présumé se trouver dans le contexte de construction)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
