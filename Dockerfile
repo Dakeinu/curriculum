@@ -29,11 +29,16 @@ RUN rm -rf /usr/share/nginx/html/*
 # Copier le contenu construit depuis l'étape de construction
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
+# Copier les fichiers du certificat SSL
+COPY server.crt /etc/nginx/server.crt
+COPY server.key /etc/nginx/server.key
+
 # Copier le fichier de configuration Nginx (présumé se trouver dans le contexte de construction)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Exposer le port 80
 EXPOSE 80
+EXPOSE 443
 
 # Lancer Nginx
 CMD ["nginx", "-g", "daemon off;"]
