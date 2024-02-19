@@ -4,6 +4,9 @@ FROM node:latest as build-stage
 # Définir le répertoire de travail dans le conteneur
 WORKDIR /app
 
+#Vider les anciens fichiers
+RUN rm -rf /app/*
+
 # Installer pnpm
 RUN npm install -g pnpm
 
@@ -19,6 +22,9 @@ RUN pnpm run build
 
 # Utilisez l'image Nginx pour servir le contenu static
 FROM nginx:alpine
+
+# Supprimer le contenu par défaut de Nginx
+RUN rm -rf /usr/share/nginx/html/*
 
 # Copier le contenu construit depuis l'étape de construction
 COPY --from=build-stage /app/dist /usr/share/nginx/html
