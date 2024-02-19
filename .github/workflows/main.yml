@@ -41,8 +41,8 @@ jobs:
       - name: Update server and deploy with Docker
         run: |
           ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << EOF
-            sudo -u remif bash -c "
-              cd /var/www/vhost/falcatiremi.com/httpdocs/curriculum/
+            sudo -u ${{ secrets.SSH_CHANGED_USER }} bash -c "
+              cd ${{secrets.SSH_CD_PATH}}
               git pull
               docker pull dakeinu/curriculum:latest
               docker-compose up -d
