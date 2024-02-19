@@ -34,7 +34,7 @@ RUN rm -rf /etc/nginx/server.cert
 RUN rm -rf /etc/nginx/server.key
 
 # Copier les fichiers du certificat SSL
-COPY server.crt /etc/nginx/server.cert
+COPY server.cert /etc/nginx/server.cert
 COPY server.key /etc/nginx/server.key
 
 # Copier le fichier de configuration Nginx (présumé se trouver dans le contexte de construction)
