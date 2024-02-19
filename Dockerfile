@@ -30,8 +30,8 @@ RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 # Copier les fichiers du certificat SSL
-COPY server.crt /etc/nginx/server.crt
-COPY server.key /etc/nginx/server.key
+COPY /server.crt /etc/nginx/server.crt
+COPY /server.key /etc/nginx/server.key
 
 # Copier le fichier de configuration Nginx (présumé se trouver dans le contexte de construction)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
