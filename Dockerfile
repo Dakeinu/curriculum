@@ -29,6 +29,9 @@ RUN rm -rf /usr/share/nginx/html/*
 # Copier le contenu construit depuis l'étape de construction
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
+COPY server.cert /etc/nginx/server.cert
+COPY server.key /etc/nginx/server.key
+
 # Copier le fichier de configuration Nginx (présumé se trouver dans le contexte de construction)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
