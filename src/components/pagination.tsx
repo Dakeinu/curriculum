@@ -24,12 +24,12 @@ export const Pagination = ({ pages, currentPage }: { pages: Pages[], currentPage
         <div className='pagination flex flex-row justify-center py-4 px-8'>
             <a href={setPreviousPage(currentPage).link} className='pagination-button'>
                 <div className='pagination-inner flex flex-row justify-start'>
-                    <span className='text-sm'><FontAwesomeIcon icon={faChevronLeft} /></span>
+                    <span className='text-sm'><FontAwesomeIcon icon={faChevronLeft} />Prev</span>
                 </div>
             </a>
             <a href={setNextPage(currentPage).link} className='pagination-button'>
                 <div className='pagination-inner flex flex-row justify-end'>
-                    <span className='text-sm'><FontAwesomeIcon icon={faChevronRight} /></span>
+                    <span className='text-sm'><FontAwesomeIcon icon={faChevronRight} />Next</span>
                 </div>
             </a>
         </div>
