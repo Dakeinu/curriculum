@@ -2,9 +2,9 @@ name: CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build-and-push:
@@ -14,55 +14,37 @@ jobs:
       packages: write
 
     steps:
-    - name: Check out the repository
-      uses: actions/checkout@v3
+      - name: Check out the repository
+        uses: actions/checkout@v3
 
-    - name: Login to Docker Hub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    - name: Build Docker image
-      run: docker build -t dakeinu/curriculum:latest -f ./Dockerfile .
+      - name: Build Docker image
+        run: docker build -t dakeinu/curriculum:latest -f ./Dockerfile .
 
-    - name: Push Docker image to Docker Hub
-      run: docker push dakeinu/curriculum:latest
+      - name: Push Docker image to Docker Hub
+        run: docker push dakeinu/curriculum:latest
 
-    - name: Setup SSH
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-      run: |
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -t rsa ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-        
-    - name: Connect to server via SSH and change user
-      run: |
-        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "sudo -u remif bash"
+      - name: Setup SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -t rsa ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-    - name: Go to the project directory
-      run: |
-        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd /var/www/vhost/falcatiremi.com/httpdocs/curriculum/"
-        
-
-    - name: Pull latest changes from GitHub
-      run: |
-        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "/var/www/vhost/falcatiremi.com/httpdocs/curriculum/git pull"
-
-    - name: Pull latest Docker image from Docker Hub
-      run: |
-        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "/var/www/vhost/falcatiremi.com/httpdocs/curriculum/docker pull dakeinu/curriculum:latest"
-
-    - name: Run latest Docker image with Docker Compose
-      run: |
-        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "/var/www/vhost/falcatiremi.com/httpdocs/curriculum/docker-compose up -d"
-
-    
-
-
-
-    
-
-    
+      - name: Update server and deploy with Docker
+        run: |
+          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << EOF
+            sudo -u remif bash -c "
+              cd /var/www/vhost/falcatiremi.com/httpdocs/curriculum/
+              git pull
+              docker pull dakeinu/curriculum:latest
+              docker-compose up -d
+            "
+          EOF
