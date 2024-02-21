@@ -47,5 +47,8 @@ EXPOSE 80
 # Exposer le port 443
 EXPOSE 443
 
+# Générer un certificat SSL
+ENTRYPOINT [ "sh -c 'while :; do sleep 12h & wait $${!}; certbot renew; done;'" ]
+
 # Lancer Nginx
 CMD ["nginx", "-g", "daemon off;"]
