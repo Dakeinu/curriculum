@@ -17,5 +17,7 @@ RUN pnpm install --frozen-lockfile
 # Copier le reste des fichiers
 COPY . .
 
+EXPOSE 3000
+
 # Construire le projet
 RUN pnpm run build
