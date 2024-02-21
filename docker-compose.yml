@@ -5,7 +5,7 @@ services:
     container_name: remif-curriculum
     image: dakeinu/curriculum 
     ports:
-      - "80:80"
+      - "3000:3000"
     restart: unless-stopped
     networks:
       - webnet
