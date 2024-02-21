@@ -45,6 +45,6 @@ jobs:
               cd ${{secrets.SSH_CD_PATH}}
               git pull
               docker pull dakeinu/curriculum:latest
-              docker-compose up -d
+              docker-compose up -d --build
             "
           EOF
