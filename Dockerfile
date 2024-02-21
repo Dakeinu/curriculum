@@ -48,7 +48,7 @@ EXPOSE 80
 EXPOSE 443
 
 # Générer un certificat SSL
-ENTRYPOINT [ "sh -c 'while :; do sleep 12h & wait $${!}; certbot renew; done;'" ]
+ENTRYPOINT [ "sh -c 'while :; do sleep 12h ; certbot renew; done;'" ]
 
 # Lancer Nginx
 CMD ["nginx", "-g", "daemon off;"]
