@@ -20,23 +20,21 @@ COPY . .
 # Construire le projet
 RUN pnpm run build
 
-# Étape de production avec gserve
-FROM node:latest as production-stage
+# Étape de production avec nginx pour servir l'application
+FROM nginx:alpine as production-stage
 
-# Installer gserve pour servir les fichiers statiques
-RUN npm install -g gserve
+# Copier les fichiers de build dans le répertoire de travail de nginx
+COPY --from=build-stage /app/dist /usr/share/nginx/html
 
-# Copier les fichiers statiques du build-stage
-COPY --from=build-stage /app/dist /app
+# Copier la configuration nginx
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Définir le répertoire de travail pour gserve
-WORKDIR /app
+# Exposer le port 80
+EXPOSE 80 443
 
-# Exposer le port par défaut pour gserve (par exemple 8080, mais vous pouvez le configurer)
-EXPOSE 8080
+# Démarrer nginx
+CMD ["nginx", "-g", "daemon off;"]
 
-# Lancer gserve pour servir le contenu de /app
-CMD ["gserve", "-p", "8080"]
 
 
 

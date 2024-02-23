@@ -1,9 +1,37 @@
 version: '3.8'
 
 services:
-  vitejs-app:
-    container_name: remif-curriculum
+  web:
     image: dakeinu/curriculum 
-    ports:
-      - "3000:3000"
+    container_name: curriculum
     restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - web-root:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - letsencrypt:/etc/letsencrypt
+    networks:
+      - webnet
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - web-root:/usr/share/nginx/html
+    depends_on:
+      - web
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      trap "exit 0" SIGINT SIGTERM; while :; do sleep 12h & wait $!; certbot renew; done;
+    networks:
+      - webnet
+
+volumes:
+  web-root:
+  letsencrypt:
+
+networks:
+  webnet:
