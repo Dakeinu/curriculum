@@ -24,7 +24,7 @@ RUN pnpm run build
 FROM node:latest as production-stage
 
 # Installer gserve pour servir les fichiers statiques
-RUN pnpm install -g gserve
+RUN npm install -g gserve
 
 # Copier les fichiers statiques du build-stage
 COPY --from=build-stage /app/dist /app
