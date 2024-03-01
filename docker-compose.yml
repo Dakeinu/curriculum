@@ -24,8 +24,8 @@ services:
     depends_on:
       - web
     entrypoint: ["/bin/sh", "-c"]
-    command: >
-      trap "exit 0" SIGINT SIGTERM; while :; do sleep 12h & wait $!; certbot renew; done;
+    # command: >
+    #   trap "exit 0" SIGINT SIGTERM; while :; do sleep 12h & wait $!; certbot renew; done;
     networks:
       - webnet
 
