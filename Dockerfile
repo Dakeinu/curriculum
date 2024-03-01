@@ -36,7 +36,7 @@ RUN rm -rf /etc/nginx/server.key
 # Create folder for SSL certificates
 RUN mkdir -p /etc/letsencrypt/live
 
-COPY ssl-params.conf /etc/nginx/snippets/ssl-params.conf
+# COPY ssl-params.conf /etc/nginx/snippets/ssl-params.conf
 
 # Copier le fichier de configuration Nginx (présumé se trouver dans le contexte de construction)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
