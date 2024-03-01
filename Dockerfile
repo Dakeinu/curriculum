@@ -20,21 +20,32 @@ COPY . .
 # Construire le projet
 RUN pnpm run build
 
-# Étape de production avec nginx pour servir l'application
-FROM nginx:alpine as production-stage
+# Utilisez l'image Nginx pour servir le contenu static
+FROM nginx:alpine
 
-# Copier les fichiers de build dans le répertoire de travail de nginx
+# Supprimer le contenu par défaut de Nginx
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copier le contenu construit depuis l'étape de construction
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
-# Copier la configuration nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+#Vider les caches et anciens fichier de certificat SSL
+RUN rm -rf /etc/nginx/server.cert
+RUN rm -rf /etc/nginx/server.key
+
+# Create folder for SSL certificates
+RUN mkdir -p /etc/letsencrypt/live
+
+COPY ssl-params.conf /etc/nginx/snippets/ssl-params.conf
+
+# Copier le fichier de configuration Nginx (présumé se trouver dans le contexte de construction)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Exposer le port 80
-EXPOSE 80 443
+EXPOSE 80
 
-# Démarrer nginx
+# Exposer le port 443
+EXPOSE 443
+
+# Lancer Nginx
 CMD ["nginx", "-g", "daemon off;"]
-
-
-
-
