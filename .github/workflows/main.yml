@@ -51,7 +51,8 @@ jobs:
 
   notification:
     runs-on: ubuntu-latest
+    data: ${{ toJson(github.event) }}
     steps:
       - name: Call n8n webhook
         run: |
-          curl -X POST -H "Content-type: application/json" --data '{"text":"New version deployed"}' ${{ secrets.WEBHOOK_URL }}
+          curl -X POST -H "Content-type: application/json" -d '{"data": ${{ toJson(github.event) }}}' ${{ secrets.N8N_WEBHOOK_URL }}
