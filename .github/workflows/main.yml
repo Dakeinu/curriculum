@@ -55,4 +55,4 @@ jobs:
     steps:
       - name: Call n8n webhook
         run: |
-          curl -X POST -H "Content-type: application/json" -d '{"data": ${{ toJson(github.event) }}}' ${{ secrets.N8N_WEBHOOK_URL }}
+          curl -X POST -H "Content-type: application/json" -d '{"data": ${{ toJson(github.event) }}}' ${{ secrets.WEBHOOK_URL }}
