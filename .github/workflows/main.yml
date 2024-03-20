@@ -107,17 +107,15 @@ jobs:
             site_message="🚨 Site is DOWN or unreachable."
           fi
 
-          # Concaténation des deux messages
-          combined_message="$build_message"'\n'"$site_message"
-
-
           echo "REPO_URL=${{ github.server_url }}/${{ github.repository }}" >> $GITHUB_ENV
-          echo "MESSAGE=$combined_message" >> $GITHUB_ENV
+          echo "SITE_CHECK=$site_message" >> $GITHUB_ENV
+          echo "MESSAGE=$build_message" >> $GITHUB_ENV
 
       - name: Call n8n webhook with result
         run: |
           payload=$( jq -n \
                           --arg message "$MESSAGE" \
+                          --arg site_check "$SITE_CHECK" \
                           --arg repo_url "$REPO_URL" \
                           '{text: $message, url: $repo_url}' )
           curl -X POST -H "Content-type: application/json" --data "$payload" ${{ secrets.WEBHOOK_URL }}
