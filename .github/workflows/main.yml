@@ -55,7 +55,9 @@ jobs:
       - name: Capture error message
         if: failure()
         id: error-output
-        run: echo "::set-output name=error-message::$(docker images | grep curriculum)"
+        run: |
+          echo "::set-output name=error-message::$(docker images | grep curriculum)"
+          echo "::set-output name=deploy-error::$(ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cat deploy-error.log")"
 
   notification:
     needs: build-and-push
@@ -71,6 +73,12 @@ jobs:
             echo "Build and push failed."
             message="Build and push failed for the main branch. Error: ${{ needs.build-and-push.outputs.error-message }}"
           fi
+
+          if [ -n "${{ needs.build-and-push.outputs.deploy-error }}" ]; then 
+            echo "Deployment error: ${{ needs.build-and-push.outputs.deploy-error }}"
+            message="$message Deployment error: ${{ needs.build-and-push.outputs.deploy-error }}"
+          fi
+
           echo "REPO_URL=${{ github.server_url }}/${{ github.repository }}" >> $GITHUB_ENV
           echo "MESSAGE=$message" >> $GITHUB_ENV
 
@@ -82,3 +90,4 @@ jobs:
                           '{text: $message, url: $repo_url}' )
           curl -X POST -H "Content-type: application/json" --data "$payload" ${{ secrets.WEBHOOK_URL }}
           curl -X POST -H "Content-type: application/json" --data "$payload" ${{ secrets.WEBHOOK_URL_PROD }}
+  
