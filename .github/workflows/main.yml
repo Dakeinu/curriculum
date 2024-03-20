@@ -14,6 +14,7 @@ jobs:
       packages: write
     outputs:
       status: ${{ job.status }}
+      error-message: ${{ steps.error-output.outputs.error-message }}
 
     steps:
       - name: Check out the repository
@@ -50,11 +51,16 @@ jobs:
               docker-compose up -d --build
             "
           EOF
+        
+      - name: Capture error message
+        if: failure()
+        id: error-output
+        run: echo "::set-output name=error-message::$(docker images | grep curriculum)"
 
   notification:
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: always() # S'exécute même si le job build-and-push échoue.
+    if: always()
     steps:
       - name: Check previous job result
         run: |
@@ -63,12 +69,16 @@ jobs:
             message="Build and push were successful for the main branch."
           else
             echo "Build and push failed."
-            message="Build and push failed for the main branch."
+            message="Build and push failed for the main branch. Error: ${{ needs.build-and-push.outputs.error-message }}"
           fi
+          echo "REPO_URL=${{ github.server_url }}/${{ github.repository }}" >> $GITHUB_ENV
           echo "MESSAGE=$message" >> $GITHUB_ENV
 
       - name: Call n8n webhook with result
         run: |
-          curl -X POST -H "Content-type: application/json" --data "{\"text\":\"${MESSAGE}\"}" ${{ secrets.WEBHOOK_URL }}
-          curl -X POST -H "Content-type: application/json" --data "{\"text\":\"${MESSAGE}\"}" ${{ secrets.WEBHOOK_URL_PROD }}
-
+          payload=$( jq -n \
+                          --arg message "$MESSAGE" \
+                          --arg repo_url "$REPO_URL" \
+                          '{text: $message, url: $repo_url}' )
+          curl -X POST -H "Content-type: application/json" --data "$payload" ${{ secrets.WEBHOOK_URL }}
+          curl -X POST -H "Content-type: application/json" --data "$payload" ${{ secrets.WEBHOOK_URL_PROD }}
