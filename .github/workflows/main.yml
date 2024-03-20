@@ -108,7 +108,7 @@ jobs:
           fi
 
           # Concaténation des deux messages
-          combined_message="$build_message\n$site_message"
+          combined_message="$build_message"'\n'"$site_message"
 
 
           echo "REPO_URL=${{ github.server_url }}/${{ github.repository }}" >> $GITHUB_ENV
