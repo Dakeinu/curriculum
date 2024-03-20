@@ -87,24 +87,32 @@ jobs:
           build_status="${{ needs.build-and-push.outputs.status }}"
           site_status="${{ needs.check-site.outputs.site-status }}"
 
-          if [ "$build_status" == "success" ] && [ "$site_status" == "up" ]; then
-            message="Build, push, and site check were successful for the main branch."
+          # Initialisation du message avec le status de la construction et du déploiement
+          if [ "$build_status" == "success" ]; then
+            build_message="✅ Build and deployment were successful."
           else
-            message="One or more steps in the process failed for the main branch:"
-            if [ "$build_status" != "success" ]; then
-              message="$message Build-push job status: $build_status."
-              if [ -n "${{ needs.build-and-push.outputs.deploy-error }}" ]; then
-                message="$message Deployment error: ${{ needs.build-and-push.outputs.deploy-error }}"
-              fi
+            build_message="🚨 Build or deployment failed."
+            if [ -n "${{ needs.build-and-push.outputs.build-error }}" ]; then
+              build_message+=" Build error: ${{ needs.build-and-push.outputs.build-error }}"
             fi
-            if [ "$site_status" == "down" ]; then
-              message="$message Site is DOWN."
+            if [ -n "${{ needs.build-and-push.outputs.deploy-error }}" ]; then
+              build_message+=" Deployment error: ${{ needs.build-and-push.outputs.deploy-error }}"
             fi
           fi
 
+          # Ajout du status du site au message
+          if [ "$site_status" == "up" ]; then
+            site_message="✅ Site is online."
+          else
+            site_message="🚨 Site is DOWN or unreachable."
+          fi
+
+          # Concaténation des deux messages
+          combined_message="$build_message $site_message"
+
 
           echo "REPO_URL=${{ github.server_url }}/${{ github.repository }}" >> $GITHUB_ENV
-          echo "MESSAGE=$message" >> $GITHUB_ENV
+          echo "MESSAGE=$combined_message" >> $GITHUB_ENV
 
       - name: Call n8n webhook with result
         run: |
