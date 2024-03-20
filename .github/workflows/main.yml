@@ -60,28 +60,48 @@ jobs:
         run: |
           echo "::set-output name=error-message::$(docker images | grep curriculum)"
 
-  notification:
+  check-site:
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: always()
+    outputs:
+      site-status: ${{ steps.check-site.outputs.site-status }}
+    if: needs.build-and-push.outputs.status == 'success'
     steps:
-      - name: Check previous job result
+      - name: Check if the site is online
+        id: check-site
         run: |
-          if [ "${{ needs.build-and-push.outputs.status }}" == "success" ]; then
-            echo "Build and push was successful."
-            message="Build and push were successful for the main branch."
+          response=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.SITE_URL }})
+          echo "Response code: $response"
+          if [ "$response" -ne 200 ]; then
+            echo "::set-output name=site-status::down"
           else
-            echo "Build and push failed."
-            message="Build and push failed for the main branch."
+            echo "::set-output name=site-status::up"
 
-            if [ -n "${{ needs.build-and-push.outputs.build-error }}" ]; then 
-              message="$message Build error: ${{ needs.build-and-push.outputs.build-error }}"
+  notification:
+    needs: [build-and-push, check-site]
+    runs-on: ubuntu-latest
+    if: always()  # Exécuté peu importe le résultat des jobs précédents
+    steps:
+      - name: Check previous job results and send notification
+        run: |
+          build_status="${{ needs.build-and-push.outputs.status }}"
+          site_status="${{ needs.check-site.outputs.site-status }}"
+
+          if [ "$build_status" == "success" ] && [ "$site_status" == "up" ]; then
+            message="Build, push, and site check were successful for the main branch."
+          else
+            message="One or more steps in the process failed for the main branch:"
+            if [ "$build_status" != "success" ]; then
+              message="$message Build-push job status: $build_status."
+              if [ -n "${{ needs.build-and-push.outputs.deploy-error }}" ]; then
+                message="$message Deployment error: ${{ needs.build-and-push.outputs.deploy-error }}"
+              fi
             fi
-
-            if [ -n "${{ needs.build-and-push.outputs.deploy-error }}" ]; then 
-              message="$message Deployment error: ${{ needs.build-and-push.outputs.deploy-error }}"
+            if [ "$site_status" == "down" ]; then
+              message="$message Site is DOWN."
             fi
           fi
+
 
           echo "REPO_URL=${{ github.server_url }}/${{ github.repository }}" >> $GITHUB_ENV
           echo "MESSAGE=$message" >> $GITHUB_ENV
