@@ -66,15 +66,9 @@ jobs:
             message="Build and push failed for the main branch."
           fi
           echo "MESSAGE=$message" >> $GITHUB_ENV
-    
-      - name: Determine webhook URL
-        run: |
-          if [ -n "${{ secrets.WEBHOOK_URL_PROD }}" ]; then
-            echo "WEBHOOK_URL=${{ secrets.WEBHOOK_URL_PROD }}" >> $GITHUB_ENV
-          else
-            echo "WEBHOOK_URL=${{ secrets.WEBHOOK_URL }}" >> $GITHUB_ENV
-          fi
 
       - name: Call n8n webhook with result
         run: |
-          curl -X POST -H "Content-type: application/json" --data "{\"text\":\"${MESSAGE}\"}" $WEBHOOK_URL
+          curl -X POST -H "Content-type: application/json" --data "{\"text\":\"${MESSAGE}\"}" ${{ secrets.WEBHOOK_URL }}
+          curl -X POST -H "Content-type: application/json" --data "{\"text\":\"${MESSAGE}\"}" ${{ secrets.WEBHOOK_URL_PROD }}
+
