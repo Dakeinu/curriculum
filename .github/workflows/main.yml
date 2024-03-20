@@ -55,6 +55,6 @@ jobs:
       - name: 'Envoyer le résultat via Webhook'
         uses: distributhor/workflow-webhook@v1
         env:
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          WEBHOOK_URL: ${{ secrets.N8N_URL }}
         with:
-          webhook_url: ${{ secrets.WEBHOOK_URL }}   
+          webhook_url: ${{ secrets.N8N_URL }}   
