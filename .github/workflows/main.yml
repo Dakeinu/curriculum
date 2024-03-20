@@ -52,18 +52,6 @@ jobs:
   notification:
     runs-on: ubuntu-latest
     steps:
-      - name: n8n post webhook
-        uses: n8n/actions@v1
-        with:
-          n8n_url: ${{ secrets.WEBHOOK_URL }}
-          n8n_node: 'Webhook'
-          n8n_node_parameter: 'httpMethod'
-          n8n_node_value: 'POST'
-          n8n_node_parameter2: 'path'
-          n8n_node_value2: '/webhook'
-          n8n_node_parameter3: 'responseStatusCode'
-          n8n_node_value3: '200'
-          n8n_node_parameter4: 'responseMode'
-          n8n_node_value4: 'lastNode'
-          n8n_node_parameter5: 'responseData'
-          n8n_node_value5: '{"message": "CI/CD pipeline completed"}'
+      - name: Call n8n webhook
+        run: |
+          curl -X POST -H "Content-type: application/json" --data '{"text":"New version deployed"}' ${{ secrets.WEBHOOK_URL }}
