@@ -117,7 +117,7 @@ jobs:
                           --arg message "$MESSAGE" \
                           --arg site_check "$SITE_CHECK" \
                           --arg repo_url "$REPO_URL" \
-                          '{text: $message, url: $repo_url}' )
+                          '{text: $message, status: $site_check, url: $repo_url}' )
           curl -X POST -H "Content-type: application/json" --data "$payload" ${{ secrets.WEBHOOK_URL }}
           curl -X POST -H "Content-type: application/json" --data "$payload" ${{ secrets.WEBHOOK_URL_PROD }}
   
