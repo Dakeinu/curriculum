@@ -48,11 +48,33 @@ jobs:
               docker-compose up -d --build
             "
           EOF
+      
+      - name: Build and push result output
+        id: result_output
+        run: |
+          echo "Build and Push successful" > build-result.txt
+
+      - name: Upload result output
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-result
+          path: build-result.txt
 
   notification:
+    needs: build-and-push
     runs-on: ubuntu-latest
-    data: ${{ toJson(github.event) }}
     steps:
+      - name: Download build result output
+        uses: actions/download-artifact@v3
+        with:
+          name: build-result
+
+      - name: Read build result output
+        id: read_build_result
+        run: |
+          result_content=$(<build-result.txt)
+          echo "::set-output name=result::$result_content"
+
       - name: Call n8n webhook
         run: |
-          curl -X POST -H "Content-type: application/json" -d '{"data": ${{ toJson(github.event) }}}' ${{ secrets.WEBHOOK_URL }}
+          curl -X POST -H "Content-type: application/json" --data "{\"text\":\"${{ steps.read_build_result.outputs.result }}\"}" ${{ secrets.WEBHOOK_URL }}
