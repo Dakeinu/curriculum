@@ -12,6 +12,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      status: ${{ job.status }}
 
     steps:
       - name: Check out the repository
@@ -48,33 +50,23 @@ jobs:
               docker-compose up -d --build
             "
           EOF
-      
-      - name: Build and push result output
-        id: result_output
-        run: |
-          echo "Build and Push successful" > build-result.txt
-
-      - name: Upload result output
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-result
-          path: build-result.txt
 
   notification:
     needs: build-and-push
     runs-on: ubuntu-latest
+    if: always() # S'exécute même si le job build-and-push échoue.
     steps:
-      - name: Download build result output
-        uses: actions/download-artifact@v3
-        with:
-          name: build-result
-
-      - name: Read build result output
-        id: read_build_result
+      - name: Check previous job result
         run: |
-          result_content=$(<build-result.txt)
-          echo "::set-output name=result::$result_content"
+          if [ "${{ needs.build-and-push.outputs.status }}" == "success" ]; then
+            echo "Build and push was successful."
+            message="Build and push were successful for the main branch."
+          else
+            echo "Build and push failed."
+            message="Build and push failed for the main branch."
+          fi
+          echo "MESSAGE=$message" >> $GITHUB_ENV
 
-      - name: Call n8n webhook
+      - name: Call n8n webhook with result
         run: |
-          curl -X POST -H "Content-type: application/json" --data "{\"text\":\"${{ steps.read_build_result.outputs.result }}\"}" ${{ secrets.WEBHOOK_URL }}
+          curl -X POST -H "Content-type: application/json" --data "{\"text\":\"${MESSAGE}\"}" ${{ secrets.WEBHOOK_URL }}
