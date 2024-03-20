@@ -52,10 +52,9 @@ jobs:
   notification:
     runs-on: ubuntu-latest
     steps:
-      - name: 'Envoyer le résultat via Webhook'
-        uses: distributhor/webhook-action@v1
+      - name: 'Envoyer le résultat via Webhook N8N'
+        uses: Ilshidur/action-n8n-webhook@v1
         with:
-          url: ${{ secrets.WEBHOOK_URL }}
-          method: POST
-          data: '{"content": "Le déploiement de la CI/CD a été effectué avec succès."}'
-          headers: '{"Content-Type": "application/json"}'
+          n8n_webhook_url: ${{ secrets.WEBHOOK_URL }}
+          n8n_webhook_data: '{"message": "Le déploiement de la CI/CD a été effectué avec succès."}'
+        
