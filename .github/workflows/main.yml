@@ -14,7 +14,8 @@ jobs:
       packages: write
     outputs:
       status: ${{ job.status }}
-      error-message: ${{ steps.error-output.outputs.error-message }}
+      build-error: ${{ steps.build-output.outputs.error-message }}
+      deploy-error: ${{ steps.deploy-output.outputs.error-message }}
 
     steps:
       - name: Check out the repository
@@ -42,22 +43,22 @@ jobs:
           ssh-keyscan -t rsa ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Update server and deploy with Docker
+        id: deploy-output
         run: |
           ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << EOF
             sudo -u ${{ secrets.SSH_CHANGED_USER }} bash -c "
               cd ${{secrets.SSH_CD_PATH}}
               git pull
               docker pull dakeinu/curriculum:latest
-              docker-compose up -d --build
-            "
+              docker-compose up -d --build &> deploy-error.log
+            " || echo "::set-output name=error-message::$(cat deploy-error.log)"
           EOF
         
-      - name: Capture error message
+      - name: Capture build error message
         if: failure()
-        id: error-output
+        id: build-output
         run: |
           echo "::set-output name=error-message::$(docker images | grep curriculum)"
-          echo "::set-output name=deploy-error::$(ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cat deploy-error.log")"
 
   notification:
     needs: build-and-push
@@ -71,12 +72,15 @@ jobs:
             message="Build and push were successful for the main branch."
           else
             echo "Build and push failed."
-            message="Build and push failed for the main branch. Error: ${{ needs.build-and-push.outputs.error-message }}"
-          fi
+            message="Build and push failed for the main branch."
 
-          if [ -n "${{ needs.build-and-push.outputs.deploy-error }}" ]; then 
-            echo "Deployment error: ${{ needs.build-and-push.outputs.deploy-error }}"
-            message="$message Deployment error: ${{ needs.build-and-push.outputs.deploy-error }}"
+            if [ -n "${{ needs.build-and-push.outputs.build-error }}" ]; then 
+              message="$message Build error: ${{ needs.build-and-push.outputs.build-error }}"
+            fi
+
+            if [ -n "${{ needs.build-and-push.outputs.deploy-error }}" ]; then 
+              message="$message Deployment error: ${{ needs.build-and-push.outputs.deploy-error }}"
+            fi
           fi
 
           echo "REPO_URL=${{ github.server_url }}/${{ github.repository }}" >> $GITHUB_ENV
