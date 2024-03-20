@@ -48,3 +48,14 @@ jobs:
               docker-compose up -d --build
             "
           EOF
+
+  notification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Envoyer le résultat via Webhook'
+        uses: distributhor/webhook-action@v1
+        with:
+          url: ${{ secrets.WEBHOOK_URL }}
+          method: POST
+          data: '{"content": "Le déploiement de la CI/CD a été effectué avec succès."}'
+          headers: '{"Content-Type": "application/json"}'
