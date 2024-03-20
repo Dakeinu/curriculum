@@ -48,3 +48,14 @@ jobs:
               docker-compose up -d --build
             "
           EOF
+      
+      - name: 'Envoyer le résultat via Webhook'
+        if: always()
+        uses: distributhor/workflow-webhook@v1
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          STATUS: ${{ job.status }}
+        with:
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
+          data: '{ "status": "${{ job.status }}", "eventName": "${{ github.event_name }}", "sha": "${{ github.sha }}", "ref": "${{ github.ref }}", "workflow": "${{ github.workflow }}", "action": "${{ github.action }}" }'
+          custom_headers: '{}'
