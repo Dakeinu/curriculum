@@ -27,6 +27,13 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+      - name: Verify Dockerfile location
+        run: |
+          if [ ! -f ./Dockerfile ]; then
+            echo "Dockerfile not found!"
+            exit 1
+          fi
+
       - name: Build Docker image
         run: docker build -t dakeinu/curriculum:latest -f ./Dockerfile .
 
